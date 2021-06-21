@@ -13,12 +13,21 @@ protocol PlayerBaseCompatible {
 
 final class Player: PlayerBaseCompatible {
     var hand: [Card]?
-
+    
     func checkIfCanTossWhenAttacking(card: Card) -> Bool {
-        false
+        let canToss = hand?.first(where: {$0.value == card.value})
+        return canToss != nil
     }
-
+    
     func checkIfCanTossWhenTossing(table: [Card: Card]) -> Bool {
-        false
+        let handValuesSet = valueToSet(cards: hand!)
+        let firstTurnSet = valueToSet(cards: Array(table.keys))
+        let secondTurnSet = valueToSet(cards: Array(table.values))
+        return !handValuesSet.intersection(firstTurnSet).isEmpty || !handValuesSet.intersection(secondTurnSet).isEmpty
+    }
+    
+    private func valueToSet(cards: [Card]) -> Set<Value> {
+        return Set(cards.map{$0.value})
     }
 }
+
